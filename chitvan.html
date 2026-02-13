@@ -1,0 +1,361 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connectify | Premium Valentine Edition</title>
+    <style>
+        :root {
+            --bg: #1a050a; /* Deep Ruby Black */
+            --card-bg: rgba(46, 2, 10, 0.8);
+            --primary: #ff1e56; /* Valentine Red */
+            --primary-hover: #ff4d6d;
+            --gold: #d4af37;
+            --text-main: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.6);
+            --border: rgba(255, 30, 86, 0.2);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Outfit', 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            overflow-y: scroll;
+        }
+
+        /* Floating Hearts Canvas Background */
+        #heartCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- STICKY HEADER --- */
+        header {
+            padding: 20px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 900;
+            background: rgba(26, 5, 10, 0.9);
+            color: var(--gold);
+            border-bottom: 2px solid var(--primary);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            letter-spacing: 4px;
+            backdrop-filter: blur(15px);
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+
+        .container {
+            display: flex;
+            padding: 25px;
+            gap: 25px;
+            max-width: 1600px;
+            margin: 0 auto;
+            align-items: flex-start;
+        }
+
+        /* --- FILTERS SIDEBAR --- */
+        .filters {
+            width: 280px;
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 25px;
+            position: sticky;
+            top: 110px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .filters h3 { margin: 0 0 20px 0; color: var(--gold); font-size: 1.1em; text-transform: uppercase; letter-spacing: 2px; }
+        .filters label { display: block; font-size: 11px; font-weight: 700; margin-bottom: 6px; color: var(--primary); text-transform: uppercase; }
+        .filters input, .filters select {
+            width: 100%; margin-bottom: 18px; padding: 12px; border-radius: 12px; 
+            border: 1px solid var(--border); background: rgba(0,0,0,0.3); color: white; box-sizing: border-box;
+            outline: none; transition: 0.3s;
+        }
+        .filters input:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
+        
+        .filters button {
+            width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary), #a9002f); 
+            border: none; border-radius: 50px; color: white; cursor: pointer; font-weight: bold; 
+            text-transform: uppercase; letter-spacing: 1px; transition: 0.3s;
+        }
+        .filters button:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(255, 30, 86, 0.4); }
+
+        /* --- PROFILE GRID --- */
+        .profiles {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid var(--border);
+            position: relative;
+            height: 420px;
+        }
+
+        .card:hover { transform: translateY(-10px); border-color: var(--gold); box-shadow: 0 15px 35px rgba(255, 30, 86, 0.2); }
+        .card img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .card:hover img { scale: 1.05; }
+        
+        .card-overlay {
+            position: absolute; bottom: 0; width: 100%; padding: 30px 20px;
+            background: linear-gradient(transparent, rgba(26, 5, 10, 0.95));
+            box-sizing: border-box;
+        }
+        .card-overlay h3 { margin: 0; font-size: 1.6em; font-weight: 800; color: #fff; }
+        .card-overlay p { margin: 8px 0 0; font-size: 0.9em; color: var(--gold); font-weight: 500; }
+
+        /* --- MATCHES SIDEBAR --- */
+        .matches-sidebar {
+            width: 320px;
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 25px;
+            position: sticky;
+            top: 110px;
+            height: 75vh;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+        }
+        .matches-sidebar h3 { color: var(--primary); margin-top: 0; margin-bottom: 20px; text-transform: uppercase; font-size: 1rem; }
+
+        .match-item {
+            display: flex; align-items: center; gap: 15px; padding: 12px;
+            background: rgba(255, 255, 255, 0.05); border-radius: 15px; margin-bottom: 12px;
+            cursor: pointer; border-left: 4px solid var(--gold);
+            transition: 0.3s;
+        }
+        .match-item:hover { background: rgba(255, 30, 86, 0.1); transform: translateX(5px); }
+
+        /* --- MODAL --- */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; overflow-y: auto; backdrop-filter: blur(10px); }
+        .modal-content { background: var(--bg); width: 95%; max-width: 500px; margin: 40px auto; border-radius: 30px; border: 1px solid var(--border); overflow: hidden; }
+        .modal-content img { width: 100%; height: 450px; object-fit: cover; }
+        .profile-body { padding: 30px; }
+        .profile-body h2 { color: var(--gold); font-style: italic; font-size: 2em; margin-bottom: 15px; }
+        
+        .prompt-card { background: rgba(255, 30, 86, 0.05); padding: 20px; border-radius: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
+        .prompt-card small { color: var(--gold); font-weight: 800; text-transform: uppercase; font-size: 10px; }
+        .prompt-card p { margin: 10px 0 0; font-family: 'Georgia', serif; font-size: 1.2em; color: #fff; }
+        
+        .modal-actions { padding: 20px 30px; display: flex; gap: 15px; border-top: 1px solid var(--border); background: var(--card-bg); }
+        .btn { flex: 1; padding: 16px; border-radius: 50px; border: none; font-weight: 800; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
+        .btn-skip { background: #334155; color: white; }
+        .btn-like { background: linear-gradient(to right, var(--primary), #a9002f); color: white; }
+
+        /* --- CHAT BOX --- */
+        .chat-box { position: fixed; bottom: 25px; right: 25px; width: 350px; background: var(--bg); border-radius: 25px; display: none; flex-direction: column; z-index: 3000; box-shadow: 0 20px 50px rgba(0,0,0,0.8); border: 1px solid var(--primary); overflow: hidden; }
+        .chat-header { background: var(--primary); padding: 18px; font-weight: 800; color: white; display: flex; justify-content: space-between; }
+        .chat-messages { padding: 20px; height: 300px; overflow-y: auto; background: rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 10px; }
+        .msg { background: #334155; padding: 10px 15px; border-radius: 15px; max-width: 80%; font-size: 14px; }
+        .msg.user { background: var(--primary); align-self: flex-end; }
+        .chat-input-area { padding: 15px; display: flex; gap: 10px; background: var(--card-bg); }
+        .chat-input-area input { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: #000; color: white; outline: none; }
+    </style>
+</head>
+<body>
+
+<canvas id="heartCanvas"></canvas>
+<header>It Just Happens💘</header>
+
+<div class="container">
+    <div class="filters">
+        <h3>Valentine Filter</h3>
+        <label>Max Age</label>
+        <input type="number" id="ageFilter" value="40">
+        
+        <label>Gender</label>
+        <select id="genderFilter">
+            <option value="Any">Any</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+        </select>
+
+        <label>Interests</label>
+        <select id="interestFilter" multiple>
+            <option>Fitness</option>
+            <option>Travel</option>
+            <option>Art</option>
+            <option>Music</option>
+            <option>Tech</option>
+            <option>Food</option>
+        </select>
+        
+        <button onclick="applyFilters()">Find My Match ❤️</button>
+    </div>
+
+    <div class="profiles" id="profiles"></div>
+
+    <div class="matches-sidebar">
+        <h3>Soul Connections</h3>
+        <div id="matchesList">
+            <p style="color: var(--text-dim); font-size: 0.85em;">No matches yet. Swipe for love!</p>
+        </div>
+    </div>
+</div>
+
+<div id="modal" class="modal">
+    <div class="modal-content" id="modalData"></div>
+</div>
+
+<div id="chatBox" class="chat-box">
+    <div class="chat-header">
+        <span id="chatName">Chat</span>
+        <span onclick="this.parentElement.parentElement.style.display='none'" style="cursor:pointer;">✕</span>
+    </div>
+    <div id="chatMessages" class="chat-messages"></div>
+    <div class="chat-input-area">
+        <input type="text" id="chatInput" placeholder="Say something sweet...">
+        <button onclick="sendMsg()" style="background:var(--primary); border:none; color:white; padding:10px 15px; border-radius:10px; cursor:pointer; font-weight:bold;">Send</button>
+    </div>
+</div>
+
+<script>
+// --- FLOATING HEARTS ANIMATION ---
+const canvas = document.getElementById('heartCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+const hearts = [];
+class Heart {
+    constructor() { this.reset(); }
+    reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = canvas.height + Math.random() * 100;
+        this.size = Math.random() * 8 + 4;
+        this.speed = Math.random() * 1 + 0.5;
+        this.opacity = Math.random() * 0.4 + 0.1;
+    }
+    update() { this.y -= this.speed; if (this.y < -20) this.reset(); }
+    draw() {
+        ctx.globalAlpha = this.opacity; ctx.fillStyle = '#ff1e56'; ctx.beginPath();
+        const d = this.size;
+        ctx.moveTo(this.x, this.y);
+        ctx.bezierCurveTo(this.x, this.y - d/2, this.x - d, this.y - d/2, this.x - d, this.y);
+        ctx.bezierCurveTo(this.x - d, this.y + d, this.x, this.y + d*1.5, this.x, this.y + d*2);
+        ctx.bezierCurveTo(this.x, this.y + d*1.5, this.x + d, this.y + d, this.x + d, this.y);
+        ctx.bezierCurveTo(this.x + d, this.y - d/2, this.x, this.y - d/2, this.x, this.y);
+        ctx.fill();
+    }
+}
+function initHearts() { for (let i = 0; i < 40; i++) hearts.push(new Heart()); }
+function animateHearts() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    hearts.forEach(h => { h.update(); h.draw(); });
+    requestAnimationFrame(animateHearts);
+}
+initHearts(); animateHearts();
+
+// --- DATA & LOGIC ---
+const profiles = [
+    { name: "Aarav", age: 24, gender: "Male", interests: ["Fitness", "Travel"], image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=500", prompts: [{q: "Simple pleasure", a: "Cold brew after a heavy leg day."}, {q: "Typical Sunday", a: "Hiking nearby trails followed by a nap."}]},
+    { name: "Meera", age: 23, gender: "Female", interests: ["Art", "Music"], image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500", prompts: [{q: "Dating me is like", a: "A 24/7 lo-fi radio station with too many snacks."}, {q: "Obsession", a: "Collecting rare house plants and painting them."}]},
+    { name: "Kabir", age: 26, gender: "Male", interests: ["Tech", "Music"], image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=500", prompts: [{q: "Life goal", a: "Launch a startup that actually makes a difference."}, {q: "Best travel tip", a: "Eat where the locals stand in line."}]},
+    { name: "Ananya", age: 24, gender: "Female", interests: ["Travel", "Food"], image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500", prompts: [{q: "Spontaneous thing", a: "Moved to a new city with just one suitcase."}, {q: "Greatest strength", a: "Self-proclaimed Taco connoisseur."}]},
+    { name: "Rohan", age: 27, gender: "Male", interests: ["Food", "Fitness"], image: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=500", prompts: [{q: "Obsession", a: "Mastering the perfect medium-rare steak."}, {q: "First round on me if", a: "You can actually beat me at chess."}]},
+    { name: "Sanya", age: 25, gender: "Female", interests: ["Music", "Food"], image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=500", prompts: [{q: "We'll get along if", a: "You like underground concerts and street food."}, {q: "Simple pleasure", a: "Long drives on empty roads."}]},
+    { name: "Arjun", age: 23, gender: "Male", interests: ["Music", "Travel"], image: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=500", prompts: [{q: "Dating me is like", a: "An unreleased indie track that grows on you."}, {q: "Typical Sunday", a: "Jamming in the garage and ordering pizza."}]},
+    { name: "Tara", age: 28, gender: "Female", interests: ["Travel", "Art"], image: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=500", prompts: [{q: "Worst idea", a: "Cycling through a monsoon. 0/10 would not recommend."}, {q: "Life goal", a: "Visit every major art museum in Europe."}]},
+    { name: "Dev", age: 29, gender: "Male", interests: ["Tech", "Food"], image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500", prompts: [{q: "Controversial opinion", a: "Pineapple absolutely belongs on pizza."}, {q: "Obsession", a: "The sound of mechanical keyboards."}]},
+    { name: "Nisha", age: 22, gender: "Female", interests: ["Fitness", "Music"], image: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=500", prompts: [{q: "Simple pleasure", a: "Outdoor yoga sessions at sunrise."}, {q: "We'll get along if", a: "You can appreciate a 90s R&B playlist."}]}
+];
+
+let disliked = [];
+let matches = [];
+let current = null;
+
+function render(list) {
+    const grid = document.getElementById("profiles");
+    grid.innerHTML = "";
+    list.filter(p => !disliked.includes(p.name)).forEach(p => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `<img src="${p.image}"><div class="card-overlay"><h3>${p.name}, ${p.age}</h3><p>${p.interests.join(" • ")}</p></div>`;
+        div.onclick = () => openModal(p);
+        grid.appendChild(div);
+    });
+}
+
+function openModal(p) {
+    current = p;
+    document.getElementById("modalData").innerHTML = `
+        <img src="${p.image}">
+        <div class="profile-body">
+            <h2>${p.name}, ${p.age}</h2>
+            ${p.prompts.map(pr => `<div class="prompt-card"><small>${pr.q}</small><p>${pr.a}</p></div>`).join('')}
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-skip" onclick="dislike()">Skip ❌</button>
+            <button class="btn btn-like" onclick="like()">Send Love ❤️</button>
+        </div>`;
+    document.getElementById("modal").style.display = "block";
+}
+
+function dislike() {
+    disliked.push(current.name);
+    document.getElementById("modal").style.display = "none";
+    applyFilters();
+}
+
+function like() {
+    if(!matches.find(m => m.name === current.name)) {
+        matches.push(current);
+        const mList = document.getElementById("matchesList");
+        if(matches.length === 1) mList.innerHTML = "";
+        const div = document.createElement("div");
+        div.className = "match-item";
+        div.onclick = () => openChat(current.name);
+        div.innerHTML = `<img src="${current.image}" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border: 2px solid var(--gold);"><div><strong>${current.name}</strong><span style="display:block; font-size:11px; color:var(--gold)">It's a Match!</span></div>`;
+        mList.appendChild(div);
+    }
+    document.getElementById("modal").style.display = "none";
+}
+
+function openChat(name) {
+    document.getElementById("chatBox").style.display = "flex";
+    document.getElementById("chatName").innerText = "Chat with " + name;
+}
+
+function sendMsg() {
+    const inp = document.getElementById("chatInput");
+    if(!inp.value.trim()) return;
+    const div = document.createElement("div");
+    div.className = "msg user";
+    div.innerText = inp.value;
+    document.getElementById("chatMessages").appendChild(div);
+    inp.value = "";
+}
+
+function applyFilters() {
+    const age = document.getElementById("ageFilter").value;
+    const gen = document.getElementById("genderFilter").value;
+    const selectedInts = Array.from(document.getElementById("interestFilter").selectedOptions).map(o => o.value);
+    const filtered = profiles.filter(p => 
+        p.age <= age && 
+        (gen === "Any" || p.gender === gen) &&
+        (selectedInts.length === 0 || selectedInts.every(i => p.interests.includes(i)))
+    );
+    render(filtered);
+}
+
+render(profiles);
+</script>
+</body>
+</html>

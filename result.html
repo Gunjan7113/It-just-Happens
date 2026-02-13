@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>It Just Happens💘 | Flame Analysis</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&family=Playfair+Display:ital,wght@1,700&display=swap');
+
+        :root {
+            --valentine-red: #ff1e56;
+            --deep-ruby: #1a050a;
+            --gold: #d4af37;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 30, 86, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background: var(--deep-ruby);
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .bg-glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--valentine-red) 0%, transparent 70%);
+            filter: blur(120px);
+            opacity: 0.15;
+            z-index: -1;
+        }
+
+        #hearts-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .heart {
+            position: absolute;
+            color: var(--valentine-red);
+            opacity: 0.5;
+            animation: floatUp 6s linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(110vh) rotate(0deg); opacity: 0.8; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        .result-container {
+            background: rgba(46, 2, 10, 0.7);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(30px);
+            padding: 3.5rem;
+            border-radius: 40px;
+            text-align: center;
+            width: 480px;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.7);
+            animation: slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            z-index: 10;
+        }
+
+        .flame-circle {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 2.5rem;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0,0,0,0.4);
+            border: 2px solid var(--border);
+            box-shadow: inset 0 0 20px rgba(255, 30, 86, 0.2);
+        }
+
+        .flame-progress {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 6px solid transparent;
+            border-top-color: var(--gold);
+            border-right-color: var(--valentine-red);
+            animation: spin 1.2s linear infinite;
+        }
+
+        .percentage {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 20px var(--valentine-red);
+            font-family: 'Playfair Display', serif;
+        }
+
+        .status-tag {
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 0.85rem;
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.4rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to bottom, #fff, #ccc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            opacity: 0.8;
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 2.5rem;
+            color: #e0e0e0;
+        }
+
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 18px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 800;
+            transition: 0.4s;
+            cursor: pointer;
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--valentine-red), #a9002f);
+            color: white;
+            box-shadow: 0 10px 30px rgba(255, 30, 86, 0.4);
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: white;
+            margin-top: 15px;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(255, 30, 86, 0.6);
+            filter: brightness(1.2);
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow"></div>
+    <div id="hearts-container"></div>
+
+    <div class="result-container">
+        <div class="status-tag" id="status-tag">Analyzing Soul Sync...</div>
+        
+        <div class="flame-circle">
+            <div class="flame-progress" id="spinner"></div>
+            <div class="percentage" id="score">0%</div>
+        </div>
+
+        <h2 id="result-title">Calculating...</h2>
+        <p id="result-desc">Reading neural patterns and emotional frequencies to find your resonance.</p>
+
+        <div id="button-area">
+            </div>
+    </div>
+
+    <script>
+        const container = document.getElementById('hearts-container');
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '❤';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 2 + 4 + 's';
+            heart.style.fontSize = Math.random() * 15 + 10 + 'px';
+            container.appendChild(heart);
+            setTimeout(() => heart.remove(), 6000);
+        }
+        setInterval(createHeart, 400);
+
+        function runFlameAnalysis() {
+            const finalScore = Math.floor(Math.random() * 41) + 60; // Bias towards higher scores for better vibe (60-100)
+            let currentScore = 0;
+            
+            const scoreDisplay = document.getElementById('score');
+            const spinner = document.getElementById('spinner');
+            const title = document.getElementById('result-title');
+            const desc = document.getElementById('result-desc');
+            const tag = document.getElementById('status-tag');
+            const btnArea = document.getElementById('button-area');
+
+            const interval = setInterval(() => {
+                if (currentScore >= finalScore) {
+                    clearInterval(interval);
+                    spinner.style.animation = "none"; 
+                    spinner.style.borderColor = "var(--gold)";
+                    renderFinalState(finalScore);
+                } else {
+                    currentScore++;
+                    scoreDisplay.innerText = currentScore + "%";
+                }
+            }, 35);
+
+            function renderFinalState(score) {
+                if (score >= 85) {
+                    tag.innerText = "Eternal Connection Found";
+                    tag.style.color = "var(--gold)";
+                    title.innerText = "Twin Flame!";
+                    desc.innerText = "The algorithm is stunned. Your soul signatures are nearly identical. This is a once-in-a-lifetime resonance.";
+                    btnArea.innerHTML = `
+                        <button class="btn btn-primary" onclick="alert('Message Sent to your Flame!')">Send a Heart ❤️</button>
+                        <a href="1.html" class="btn btn-outline">Back to Gallery</a>
+                    `;
+                } else if (score >= 60) {
+                    tag.innerText = "High Resonance";
+                    title.innerText = "Passion Detected";
+                    desc.innerText = "A beautiful connection is blooming. Your frequencies complement each other in a way that creates true harmony.";
+                    btnArea.innerHTML = `
+                        <button class="btn btn-primary">Start the Conversation</button>
+                        <a href="1.html" class="btn btn-outline">Keep Exploring</a>
+                    `;
+                } else {
+                    tag.innerText = "Analyzing Results";
+                    title.innerText = "Soft Glow";
+                    desc.innerText = "There is a gentle warmth between you, though your paths may differ. Every spark is worth exploring.";
+                    btnArea.innerHTML = `
+                        <a href="1.html" class="btn btn-primary">View Other Matches</a>
+                    `;
+                }
+            }
+        }
+
+        window.onload = runFlameAnalysis;
+    </script>
+</body>
+</html>

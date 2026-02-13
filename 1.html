@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>It Just Happens💘 | Future of Love</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&family=Playfair+Display:ital,wght@1,700&display=swap');
+
+        :root {
+            --valentine-red: #ff1e56;
+            --deep-ruby: #1a050a;
+            --gold: #d4af37;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 30, 86, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background: var(--deep-ruby);
+            color: #fff;
+            overflow-x: hidden;
+            background-attachment: fixed;
+        }
+
+        .bg-glow {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--valentine-red) 0%, transparent 70%);
+            filter: blur(100px);
+            opacity: 0.15;
+            z-index: -1;
+            border-radius: 50%;
+            animation: move 20s infinite alternate;
+        }
+
+        @keyframes move {
+            from { top: -10%; left: -10%; }
+            to { top: 70%; left: 80%; }
+        }
+
+        header {
+            padding: 1.5rem 10%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(15px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            font-style: italic;
+            background: linear-gradient(45deg, var(--valentine-red), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+
+        .nav-links a {
+            color: white;
+            margin-left: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--valentine-red);
+        }
+
+        .hero {
+            padding: 80px 10%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 85vh;
+            gap: 50px;
+        }
+
+        .hero-content {
+            max-width: 650px;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .highlight {
+            color: var(--gold);
+            font-style: italic;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .match-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 3rem;
+            border-radius: 40px;
+            backdrop-filter: blur(25px);
+            width: 420px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            background: rgba(46, 2, 10, 0.6);
+        }
+
+        .match-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 30px 70px rgba(255, 30, 86, 0.2);
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            color: white;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--valentine-red);
+            background: rgba(255, 30, 86, 0.05);
+            box-shadow: 0 0 15px rgba(255, 30, 86, 0.2);
+        }
+
+        .btn-glow {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #ff1e56, #a9002f);
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(255, 30, 86, 0.3);
+            transition: 0.4s;
+        }
+
+        .btn-glow:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(255, 30, 86, 0.5);
+            background: linear-gradient(135deg, #ff4d6d, #ff1e56);
+        }
+
+        .stat-item h3 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+        .stat-item p {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gold);
+        }
+
+        #hearts-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .heart {
+            position: absolute;
+            color: var(--valentine-red);
+            opacity: 0.6;
+            animation: floatUp 6s linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(110vh) rotate(0deg); opacity: 0.8; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        @media (max-width: 968px) {
+            .hero { flex-direction: column; text-align: center; padding-top: 50px; }
+            .match-card { width: 100%; }
+            .hero-content { margin-bottom: 40px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow"></div>
+    <div id="hearts-container"></div>
+
+    <header>
+        <div class="logo">It Just Happens💘</div>
+        <div class="nav-links">
+            <a href="#">Quantum Match</a>
+            <a href="#">Stories</a>
+            <a href="registration.html">Join Us</a>
+        </div>
+    </header>
+
+    <main class="hero">
+        <div class="hero-content">
+            <h1>Let <span class="highlight">Algorithms</span><br>Find Your Flame.</h1>
+            <p style="font-size: 1.2rem; opacity: 0.8; margin-bottom: 2.5rem; line-height: 1.6;">
+                Why leave love to chance when you can leave it to data? It Just Happens💘 uses neural synchronization to bridge the gap between hearts.
+            </p>
+            <div style="display: flex; gap: 40px; justify-content: flex-start;">
+                <div class="stat-item">
+                    <h3 style="color: var(--valentine-red);">1.2M</h3>
+                    <p>Syncs Today</p>
+                </div>
+                <div style="border-left: 1px solid var(--border); height: 50px;"></div>
+                <div class="stat-item">
+                    <h3 style="color: var(--gold);">98.4%</h3>
+                    <p>Success Rate</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="match-card">
+            <h2 style="margin-bottom: 1.5rem; font-size: 1.6rem; color: var(--gold); font-family: 'Playfair Display'; font-style: italic;">Match scanner</h2>
+            <div class="input-group">
+                <input type="text" id="name1" placeholder="Your Full Name">
+            </div>
+            <div class="input-group">
+                <input type="text" id="name2" placeholder="Their Full Name">
+            </div>
+            <button class="btn-glow" onclick="checkSync()">Calculate Match Rate ❤️</button>
+            <div id="result-display" style="margin-top: 20px; font-weight: bold; color: var(--gold);"></div>
+        </div>
+    </main>
+
+    <script>
+        const container = document.getElementById('hearts-container');
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '❤';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 3 + 4 + 's';
+            heart.style.fontSize = Math.random() * 20 + 10 + 'px';
+            container.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 6000);
+        }
+        setInterval(createHeart, 400);
+
+        function checkSync() {
+            const n1 = document.getElementById('name1').value;
+            const n2 = document.getElementById('name2').value;
+            const display = document.getElementById('result-display');
+
+            if (n1 === "" || n2 === "") {
+                display.innerText = "Please enter both names, lover! 💕";
+                display.style.color = "var(--valentine-red)";
+                return;
+            }
+
+            display.innerHTML = "Syncing Neural Hearts...";
+            display.style.color = "var(--gold)";
+
+            setTimeout(() => {
+                window.location.href = 'result.html'; 
+            }, 2000); 
+        }
+    </script>
+</body>
+</html>
